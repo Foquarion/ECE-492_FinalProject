@@ -1,0 +1,6 @@
+//org.eclipse.debug.core.PREFERRED_DELEGATES/org.eclipse.cdt.launch.applicationLaunchType=org.eclipse.cdt.dsf.gdb.launch.localCLaunch,debug,;org.eclipse.cdt.cdi.launch.localCLaunch,run,;
+//org.eclipse.debug.core.PREFERRED_DELEGATES/org.eclipse.cdt.launch.attachLaunchType=org.eclipse.cdt.dsf.gdb.launch.attachCLaunch,debug,;
+//org.eclipse.debug.core.PREFERRED_DELEGATES/org.eclipse.cdt.launch.postmortemLaunchType=org.eclipse.cdt.dsf.gdb.launch.coreCLaunch,debug,;
+//org.eclipse.debug.core.PREFERRED_DELEGATES/org.eclipse.cdt.launch.remoteApplicationLaunchType=org.eclipse.rse.remotecdt.dsf.debug,debug,;
+eclipse.preferences.version=1
+prefWatchExpressions=<?xml version\="1.0" encoding\="UTF-8" standalone\="no"?>\r\n<watchExpressions>\r\n    <expression enabled\="true" text\="main_loop_count"/>\r\n    <expression enabled\="true" text\="sw1_isr_count"/>\r\n    <expression enabled\="true" text\="sw2_isr_count"/>\r\n    <expression enabled\="true" text\="SW1_pressed"/>\r\n    <expression enabled\="true" text\="sw1_handled_count"/>\r\n    <expression enabled\="true" text\="marquee_start_count"/>\r\n    <expression enabled\="true" text\="marquee_running"/>\r\n    <expression enabled\="true" text\="marquee_state"/>\r\n    <expression enabled\="true" text\="marquee_timer"/>\r\n</watchExpressions>\r\n

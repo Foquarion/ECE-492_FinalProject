@@ -1,0 +1,113 @@
+################################################################################
+# Automatically-generated file. Do not edit!
+################################################################################
+
+SHELL = cmd.exe
+
+# Add inputs and outputs from these tool invocations to the build variables 
+CMD_SRCS += \
+../lnk_msp430fr2355.cmd 
+
+C_SRCS += \
+../ADC.c \
+../UART.c \
+../clocks.c \
+../init.c \
+../interrupts_ADC.c \
+../interrupts_UART.c \
+../interrupts_switches.c \
+../interrupts_timers.c \
+../led.c \
+../main.c \
+../ports.c \
+../switches.c \
+../system.c \
+../timers_b0.c \
+../timers_b3.c 
+
+C_DEPS += \
+./ADC.d \
+./UART.d \
+./clocks.d \
+./init.d \
+./interrupts_ADC.d \
+./interrupts_UART.d \
+./interrupts_switches.d \
+./interrupts_timers.d \
+./led.d \
+./main.d \
+./ports.d \
+./switches.d \
+./system.d \
+./timers_b0.d \
+./timers_b3.d 
+
+OBJS += \
+./ADC.obj \
+./UART.obj \
+./clocks.obj \
+./init.obj \
+./interrupts_ADC.obj \
+./interrupts_UART.obj \
+./interrupts_switches.obj \
+./interrupts_timers.obj \
+./led.obj \
+./main.obj \
+./ports.obj \
+./switches.obj \
+./system.obj \
+./timers_b0.obj \
+./timers_b3.obj 
+
+OBJS__QUOTED += \
+"ADC.obj" \
+"UART.obj" \
+"clocks.obj" \
+"init.obj" \
+"interrupts_ADC.obj" \
+"interrupts_UART.obj" \
+"interrupts_switches.obj" \
+"interrupts_timers.obj" \
+"led.obj" \
+"main.obj" \
+"ports.obj" \
+"switches.obj" \
+"system.obj" \
+"timers_b0.obj" \
+"timers_b3.obj" 
+
+C_DEPS__QUOTED += \
+"ADC.d" \
+"UART.d" \
+"clocks.d" \
+"init.d" \
+"interrupts_ADC.d" \
+"interrupts_UART.d" \
+"interrupts_switches.d" \
+"interrupts_timers.d" \
+"led.d" \
+"main.d" \
+"ports.d" \
+"switches.d" \
+"system.d" \
+"timers_b0.d" \
+"timers_b3.d" 
+
+C_SRCS__QUOTED += \
+"../ADC.c" \
+"../UART.c" \
+"../clocks.c" \
+"../init.c" \
+"../interrupts_ADC.c" \
+"../interrupts_UART.c" \
+"../interrupts_switches.c" \
+"../interrupts_timers.c" \
+"../led.c" \
+"../main.c" \
+"../ports.c" \
+"../switches.c" \
+"../system.c" \
+"../timers_b0.c" \
+"../timers_b3.c" 
+
+

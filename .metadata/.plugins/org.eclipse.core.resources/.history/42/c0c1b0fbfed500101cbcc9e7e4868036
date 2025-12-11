@@ -1,0 +1,167 @@
+################################################################################
+# Automatically-generated file. Do not edit!
+################################################################################
+
+SHELL = cmd.exe
+
+# Add inputs and outputs from these tool invocations to the build variables 
+CMD_SRCS += \
+../lnk_msp430fr2355.cmd 
+
+C_SRCS += \
+../ADC.c \
+../DAC.c \
+../DAC_test.c \
+../Display.c \
+../PWM.c \
+../UART.c \
+../bootup.c \
+../calibration.c \
+../clocks.c \
+../init.c \
+../interrupts_ADC.c \
+../interrupts_UART.c \
+../interrupts_switches.c \
+../interrupts_timers.c \
+../led.c \
+../main.c \
+../menu.c \
+../ports.c \
+../queue.c \
+../switches.c \
+../system.c \
+../timers_b0.c \
+../timers_b3.c \
+../wheels.c 
+
+C_DEPS += \
+./ADC.d \
+./DAC.d \
+./DAC_test.d \
+./Display.d \
+./PWM.d \
+./UART.d \
+./bootup.d \
+./calibration.d \
+./clocks.d \
+./init.d \
+./interrupts_ADC.d \
+./interrupts_UART.d \
+./interrupts_switches.d \
+./interrupts_timers.d \
+./led.d \
+./main.d \
+./menu.d \
+./ports.d \
+./queue.d \
+./switches.d \
+./system.d \
+./timers_b0.d \
+./timers_b3.d \
+./wheels.d 
+
+OBJS += \
+./ADC.obj \
+./DAC.obj \
+./DAC_test.obj \
+./Display.obj \
+./PWM.obj \
+./UART.obj \
+./bootup.obj \
+./calibration.obj \
+./clocks.obj \
+./init.obj \
+./interrupts_ADC.obj \
+./interrupts_UART.obj \
+./interrupts_switches.obj \
+./interrupts_timers.obj \
+./led.obj \
+./main.obj \
+./menu.obj \
+./ports.obj \
+./queue.obj \
+./switches.obj \
+./system.obj \
+./timers_b0.obj \
+./timers_b3.obj \
+./wheels.obj 
+
+OBJS__QUOTED += \
+"ADC.obj" \
+"DAC.obj" \
+"DAC_test.obj" \
+"Display.obj" \
+"PWM.obj" \
+"UART.obj" \
+"bootup.obj" \
+"calibration.obj" \
+"clocks.obj" \
+"init.obj" \
+"interrupts_ADC.obj" \
+"interrupts_UART.obj" \
+"interrupts_switches.obj" \
+"interrupts_timers.obj" \
+"led.obj" \
+"main.obj" \
+"menu.obj" \
+"ports.obj" \
+"queue.obj" \
+"switches.obj" \
+"system.obj" \
+"timers_b0.obj" \
+"timers_b3.obj" \
+"wheels.obj" 
+
+C_DEPS__QUOTED += \
+"ADC.d" \
+"DAC.d" \
+"DAC_test.d" \
+"Display.d" \
+"PWM.d" \
+"UART.d" \
+"bootup.d" \
+"calibration.d" \
+"clocks.d" \
+"init.d" \
+"interrupts_ADC.d" \
+"interrupts_UART.d" \
+"interrupts_switches.d" \
+"interrupts_timers.d" \
+"led.d" \
+"main.d" \
+"menu.d" \
+"ports.d" \
+"queue.d" \
+"switches.d" \
+"system.d" \
+"timers_b0.d" \
+"timers_b3.d" \
+"wheels.d" 
+
+C_SRCS__QUOTED += \
+"../ADC.c" \
+"../DAC.c" \
+"../DAC_test.c" \
+"../Display.c" \
+"../PWM.c" \
+"../UART.c" \
+"../bootup.c" \
+"../calibration.c" \
+"../clocks.c" \
+"../init.c" \
+"../interrupts_ADC.c" \
+"../interrupts_UART.c" \
+"../interrupts_switches.c" \
+"../interrupts_timers.c" \
+"../led.c" \
+"../main.c" \
+"../menu.c" \
+"../ports.c" \
+"../queue.c" \
+"../switches.c" \
+"../system.c" \
+"../timers_b0.c" \
+"../timers_b3.c" \
+"../wheels.c" 
+
+

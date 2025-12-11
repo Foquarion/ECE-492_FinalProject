@@ -1,0 +1,38 @@
+/*
+ * init.c
+ *
+ *  Created on: Sep 9, 2025
+ *      Author: Dallas.Owens
+ *
+ *  Basic initialization for LED Marquee project
+ */
+
+#include "msp430.h"
+#include "functions.h"
+
+// Display variables (required by some legacy code)
+//char display_line[4][11];
+//char *display[4];
+//volatile unsigned char display_changed = 0;
+//volatile unsigned char update_display = 0;
+
+
+void Init_Conditions(void) {
+    int i;
+    
+//    // Initialize display buffers
+//    for (i = 0; i < 11; i++) {
+//        display_line[0][i] = 0;
+//        display_line[1][i] = 0;
+//        display_line[2][i] = 0;
+//        display_line[3][i] = 0;
+//    }
+//
+//    display[0] = &display_line[0][0];
+//    display[1] = &display_line[1][0];
+//    display[2] = &display_line[2][0];
+//    display[3] = &display_line[3][0];
+//
+    // Enable interrupts
+    enable_interrupts();
+}

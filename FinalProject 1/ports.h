@@ -1,0 +1,106 @@
+/*
+ * ports.h: Header file for use with ports.c
+ *
+ *  Created on: Sep 9, 2025
+ *      Author: Dallas.Owens
+ */
+
+#ifndef PORTS_H_
+#define PORTS_H_
+
+
+//********* PROJECT DEFINITIONS *****************
+
+//#define FALSE                  (0x00) //
+//#define TRUE                   (0x01) //
+//#define MOTOR                  (0x00) //
+//#define SMCLK_OFF              (0x00) //
+//#define SMCLK_ON               (0x01) //
+//#define PORTS                  (0x00) // RED LED 0
+//#define WHEEL_OFF              (0x00)
+//#define WHEEL_PERIOD           (10000)
+//#define RIGHT_FORWARD_SPEED    (TB3CCR2)
+//#define RIGHT_REVERSE_SPEED    (TB3CCR3)
+//#define LEFT_FORWARD_SPEED     (TB3CCR4)
+//#define LEFT_REVERSE_SPEED     (TB3CCR5)
+//#define STEP                   (2000)
+//#define FORWARD                (0x00) // FORWARD
+//#define REVERSE                (0x01) // REVERSE
+
+//#define PWM_MODE               (0x01) // GREEN LED 1
+
+
+//********* MACRO DEFINITIONS ***************
+#define P1PUPD (P1OUT)
+#define P2PUPD (P2OUT)
+#define P3PUPD (P3OUT)
+#define P4PUPD (P4OUT)
+#define P5PUPD (P5OUT)
+#define P6PUPD (P6OUT)
+
+// #define PULL_UP     (0X01);
+// #define PULL_DOWN   (0X00);
+
+// #define P2PULL_UP
+
+
+//********* PIN DEFINITIONS *****************
+
+// PORT 1 PINS
+#define SENS0_R         (0x01)      // 0 - SENS0_R
+#define SENS0_L         (0x02)      // 1 - SENS0_L
+#define SENS1_L         (0x04)      // 2 - SENS1_L
+#define IOT_BOOT_CPU        (0x08)      // 3 - IOT_BOOT
+#define IOT_RUN_RED         (0x10)      // 4 - IOT_RUN
+#define SENS1_R         (0x20)      // 5 - SENS1_R
+#define UCA0RXD         (0x40)      // 6 - Back Channel UCA0RXD
+#define UCA0TXD         (0x80)      // 7 - Back Channel UCA0TXD
+
+// PORT 2 PINS
+#define IOT_EN          (0x01)       // 0 - SLOW_CLK
+#define IOT_LINK_GRN        (0x02)       // 1 - Check ADC Voltages
+//#define IR_LED          (0x04)      // 2 - IR_LED
+#define SW2             (0x08)       // 3 - SW1
+//#define IOT_RUN_RED     (0x10)      // 4 - IOT_RUN_RED
+//#define DAC_ENB         (0x20)      // 5 - DAC_ENB
+//#define LFXOUT          (0x40)      // 6 - XOUTR
+//#define LFXIN           (0x80)      // 7 - XINR
+
+// PORT 3 PINS
+//#define TEST_PROBE      (0x01)      // 0 - TEST PROBE
+//#define DAC_CTRL_2      (0x02)      // 1 - DAC 2 CONTROL
+//#define OA2N            (0x04)      // 2 - OA2N
+//#define OA2P            (0x08)       // 3 - OA2P
+#define SW1             (0x10)      // 4 - SW2
+//#define DAC_CTRL_3      (0x20)      // 5 - DAC 3 CONTROL
+//#define IOT_LINK_GRN    (0x40)      // 6 - IOT_LINK_GRN
+//#define IOT_EN			(0x80)      // 7 - IOT_EN
+
+// PORT 4 PINS
+//#define RESET_LCD       (0x01)      // 0 - RESET_LCD
+//#define SW1             (0x02)      // 1 - SW1
+#define UCA1RXD         (0x04)      // 2 - Back Channel UCA1RXD
+#define UCA1TXD         (0x08)      // 3 - Back Channel UCA1TXD
+#define LED_8           (0x10)      // 4 - LED_8
+#define LED_9           (0x20)      // 5 - LED_9
+//#define UCB1SIMO        (0x40)      // 6 - UCB1SIMO
+//#define UCB1SOMI        (0x80)      // 7 - UCB1SOMI
+
+// PORT 5 PINS
+#define SENS2_L         (0x01)      // 0 - SENS2_L
+#define SENS2_R         (0x02)      // 1 - SENS2_R
+//#define V_DAC           (0x04)      // 2 - V_DAC
+//#define V3_3            (0x08)      // 3 - 3.3 V
+//#define IOT_BOOT_CPU    (0x10)      // 4 - IOT_BOOT_CPU
+
+// PORT 6 PINS
+#define LED_2       (0x01)      // 0 - L_FORWARD
+#define LED_1       (0x02)      // 1 - R_FORWARD
+#define LED_3       (0x04)      // 2 - L_REVERSE
+#define LED_4       (0x08)      // 3 - R_REVERSE
+#define LED_5       (0x10)      // 4 - LCD_BACKLITE
+#define LED_6       (0x20)      // 5 - P6_5
+#define LED_7       (0x40)      // 6 - GRN_LED
+
+
+#endif /* PORTS_H_ */

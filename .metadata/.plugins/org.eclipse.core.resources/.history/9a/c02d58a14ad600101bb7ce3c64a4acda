@@ -1,0 +1,83 @@
+################################################################################
+# Automatically-generated file. Do not edit!
+################################################################################
+
+SHELL = cmd.exe
+
+# Add inputs and outputs from these tool invocations to the build variables 
+CMD_SRCS += \
+../lnk_msp430fr2355.cmd 
+
+C_SRCS += \
+../clocks.c \
+../init.c \
+../interrupts_switches.c \
+../interrupts_timers.c \
+../led.c \
+../main.c \
+../ports.c \
+../switches.c \
+../system.c \
+../timers_b0.c 
+
+C_DEPS += \
+./clocks.d \
+./init.d \
+./interrupts_switches.d \
+./interrupts_timers.d \
+./led.d \
+./main.d \
+./ports.d \
+./switches.d \
+./system.d \
+./timers_b0.d 
+
+OBJS += \
+./clocks.obj \
+./init.obj \
+./interrupts_switches.obj \
+./interrupts_timers.obj \
+./led.obj \
+./main.obj \
+./ports.obj \
+./switches.obj \
+./system.obj \
+./timers_b0.obj 
+
+OBJS__QUOTED += \
+"clocks.obj" \
+"init.obj" \
+"interrupts_switches.obj" \
+"interrupts_timers.obj" \
+"led.obj" \
+"main.obj" \
+"ports.obj" \
+"switches.obj" \
+"system.obj" \
+"timers_b0.obj" 
+
+C_DEPS__QUOTED += \
+"clocks.d" \
+"init.d" \
+"interrupts_switches.d" \
+"interrupts_timers.d" \
+"led.d" \
+"main.d" \
+"ports.d" \
+"switches.d" \
+"system.d" \
+"timers_b0.d" 
+
+C_SRCS__QUOTED += \
+"../clocks.c" \
+"../init.c" \
+"../interrupts_switches.c" \
+"../interrupts_timers.c" \
+"../led.c" \
+"../main.c" \
+"../ports.c" \
+"../switches.c" \
+"../system.c" \
+"../timers_b0.c" 
+
+

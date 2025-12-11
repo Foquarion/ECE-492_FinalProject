@@ -1,0 +1,14 @@
+"./clocks.obj"
+"./init.obj"
+"./interrupts_switches.obj"
+"./interrupts_timers.obj"
+"./led.obj"
+"./main.obj"
+"./ports.obj"
+"./switches.obj"
+"./system.obj"
+"./timers_b0.obj"
+"../Compiled/LCD.obj"
+"../lnk_msp430fr2355.cmd"
+-lfrwp_init.a
+-llibc.a

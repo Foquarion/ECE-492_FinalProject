@@ -1,0 +1,26 @@
+/*
+ * led.h
+ *
+ *  Created on: Nov 27, 2025
+ *      Author: Dallas.Owens
+ */
+
+#ifndef LED_H_
+#define LED_H_
+
+
+// LED MACROS___________________________
+#define RED_OFF()               do { P1OUT &= ~RED_LED; } while(0)
+#define RED_ON()                do { P1OUT |=  RED_LED; } while(0)
+#define RED_TOGGLE()            do { P1OUT ^=  RED_LED; } while(0)
+
+#define GRN_OFF()               do { P6OUT &= ~GRN_LED; } while(0)
+#define GRN_ON()                do { P6OUT |=  GRN_LED; } while(0)
+#define GRN_TOGGLE()            do { P6OUT ^=  GRN_LED; } while(0)
+
+#define IR_OFF()                do { P2OUT &= ~IR_LED; } while(0)
+#define IR_ON()                 do { P2OUT |=  IR_LED; } while(0)
+#define IR_TOGGLE()             do { P2OUT ^=  IR_LED; } while(0)
+
+
+#endif /* LED_H_ */

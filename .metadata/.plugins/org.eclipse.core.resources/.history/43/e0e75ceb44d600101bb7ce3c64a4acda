@@ -1,0 +1,62 @@
+/*
+ * interrupts_ports.c
+ *
+ *  Created on: Oct 12, 2025
+ *      Author: Dallas.Owens
+ */
+
+#include "timers.h"
+#include "msp430.h"
+#include <string.h>
+#include "functions.h"
+#include "LCD.h"
+#include "ports.h"
+#include "macros.h"
+#include "switches.h"
+#include "LED.h"
+
+// Debug counters
+volatile unsigned long sw1_isr_count = 0;
+volatile unsigned long sw2_isr_count = 0;
+
+// Switch state variables
+extern volatile unsigned int SW1_pressed;
+extern volatile unsigned int SW2_pressed;
+
+
+// *************** SWITCH INTERRUPT HANDLERS ******************
+
+// SW1 is on Port 3 (P3.4)
+#pragma vector = PORT3_VECTOR
+__interrupt void switchP3_interrupt(void)
+{
+    if(P3IFG & SW1){
+        sw1_isr_count++;                    // Debug: count ISR entries
+        
+        P3IFG &= ~SW1;                      // Clear interrupt flag
+        
+        // Simple debounce: just set the flag, let main loop handle it
+        // The switch won't trigger again until released due to edge-triggered interrupt
+        SW1_pressed = 1;
+        
+        // Optional: disable interrupt briefly to prevent bounce
+        // It will be re-enabled after a short delay or in Switches_Process
+        // For now, leave it enabled for simplicity
+    }
+}
+
+
+// SW2 is on Port 2 (P2.3)
+#pragma vector = PORT2_VECTOR
+__interrupt void switchP2_interrupt(void)
+{
+    if (P2IFG & SW2){
+        sw2_isr_count++;                    // Debug: count ISR entries
+        
+        P2IFG &= ~SW2;                      // Clear interrupt flag
+        
+        // Simple debounce: just set the flag
+        SW2_pressed = 1;
+    }
+}
+// -----------------------------------------------------------------

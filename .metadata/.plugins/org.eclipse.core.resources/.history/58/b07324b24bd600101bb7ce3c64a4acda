@@ -1,0 +1,185 @@
+/*
+ * led.c
+ *
+ *  Created on: Sep 9, 2025
+ *      Author: Dallas.Owens
+ *
+ *  LED Marquee Implementation
+ *  --------------------------
+ *  Requirements:
+ *    - Default state: LEDs 3-9 ON
+ *    - SW1: Start/Stop marquee sequence
+ *    - SW2: If marquee running, stop it and turn LEDs off
+ *           If marquee not running, toggle LEDs on/off
+ *
+ *  Marquee Sequence:
+ *    1. Turn all LEDs off
+ *    2. Turn on LEDs 3->9 sequentially (300ms between each)
+ *    3. Turn off LEDs 3->9 sequentially (300ms between each)
+ *    4. Return to default state (all on)
+ */
+
+#include "msp430.h"
+#include "ports.h"
+#include "LED.h"
+#include "timers.h"
+
+//==============================================================================
+// MARQUEE STATE MACHINE
+//==============================================================================
+
+// States
+#define STATE_IDLE          (0)     // Not running, LEDs in static state
+#define STATE_TURNING_ON    (1)     // Sequentially turning LEDs on
+#define STATE_TURNING_OFF   (2)     // Sequentially turning LEDs off
+
+// State variables
+static volatile unsigned char marquee_state = STATE_IDLE;
+static volatile unsigned char current_led = 0;
+static volatile unsigned char leds_on = 1;      // Track if LEDs are currently on
+
+// Timer counter (incremented by TB2 CCR2 ISR)
+volatile unsigned int marquee_timer = 0;
+
+
+//==============================================================================
+// BASIC LED CONTROL
+//==============================================================================
+
+void LEDS_3_9_ON(void) {
+    P6OUT |= (LED_3 | LED_4 | LED_5 | LED_6 | LED_7);
+    P4OUT |= (LED_8 | LED_9);
+    leds_on = 1;
+}
+
+void LEDS_3_9_OFF(void) {
+    P6OUT &= ~(LED_3 | LED_4 | LED_5 | LED_6 | LED_7);
+    P4OUT &= ~(LED_8 | LED_9);
+    leds_on = 0;
+}
+
+void LED_Set_By_Index(unsigned char index, unsigned char on) {
+    // index 0-6 maps to LED_3 through LED_9
+    switch(index) {
+        case 0: if(on) LED3_ON(); else LED3_OFF(); break;
+        case 1: if(on) LED4_ON(); else LED4_OFF(); break;
+        case 2: if(on) LED5_ON(); else LED5_OFF(); break;
+        case 3: if(on) LED6_ON(); else LED6_OFF(); break;
+        case 4: if(on) LED7_ON(); else LED7_OFF(); break;
+        case 5: if(on) LED8_ON(); else LED8_OFF(); break;
+        case 6: if(on) LED9_ON(); else LED9_OFF(); break;
+        default: break;
+    }
+}
+
+
+//==============================================================================
+// MARQUEE CONTROL
+//==============================================================================
+
+unsigned char Marquee_Is_Running(void) {
+    return (marquee_state != STATE_IDLE);
+}
+
+void Marquee_Start(void) {
+    // Turn off all LEDs to begin sequence
+    LEDS_3_9_OFF();
+    
+    // Initialize state machine
+    marquee_state = STATE_TURNING_ON;
+    current_led = 0;
+    marquee_timer = 0;
+    
+    // Enable Timer B2 CCR2 interrupt (50ms ticks)
+    TB2CCTL2 &= ~CCIFG;                     // Clear pending interrupt
+    TB2CCR2 = TB2R + TB2CCR2_INTERVAL;      // Schedule next interrupt
+    TB2CCTL2 |= CCIE;                       // Enable interrupt
+}
+
+void Marquee_Stop(void) {
+    // Disable timer interrupt
+    TB2CCTL2 &= ~CCIE;
+    
+    // Reset state
+    marquee_state = STATE_IDLE;
+    current_led = 0;
+    marquee_timer = 0;
+}
+
+void Marquee_Process(void) {
+    // Only process if marquee is running
+    if (marquee_state == STATE_IDLE) {
+        return;
+    }
+    
+    // Wait for 300ms delay (6 x 50ms ticks)
+    if (marquee_timer < MARQUEE_DELAY_TICKS) {
+        return;
+    }
+    
+    // Reset timer for next LED
+    marquee_timer = 0;
+    
+    switch (marquee_state) {
+        case STATE_TURNING_ON:
+            // Turn on current LED
+            LED_Set_By_Index(current_led, 1);
+            current_led++;
+            
+            // Check if all LEDs are now on
+            if (current_led >= NUM_MARQUEE_LEDS) {
+                current_led = 0;
+                marquee_state = STATE_TURNING_OFF;
+            }
+            break;
+            
+        case STATE_TURNING_OFF:
+            // Turn off current LED
+            LED_Set_By_Index(current_led, 0);
+            current_led++;
+            
+            // Check if all LEDs are now off
+            if (current_led >= NUM_MARQUEE_LEDS) {
+                // Sequence complete - return to default state
+//                Marquee_Stop();
+                LEDS_3_9_ON();
+                Marquee_Start();
+            }
+            break;
+            
+        default:
+            Marquee_Stop();
+            break;
+    }
+}
+
+
+//==============================================================================
+// SWITCH HANDLERS
+//==============================================================================
+
+void Handle_SW1_Press(void) {
+    // SW1: Toggle marquee on/off
+    if (Marquee_Is_Running()) {
+        Marquee_Stop();
+        LEDS_3_9_ON();      // Return to default state
+    } else {
+        Marquee_Start();
+    }
+}
+
+void Handle_SW2_Press(void) {
+    // SW2: If marquee running, stop and turn off LEDs
+    //      If not running, toggle LEDs
+    if (Marquee_Is_Running()) {
+        Marquee_Stop();
+        LEDS_3_9_OFF();     // Turn off after stopping marquee
+    } else {
+        // Toggle LEDs
+        if (leds_on) {
+            LEDS_3_9_OFF();
+        } else {
+            LEDS_3_9_ON();
+        }
+    }
+}

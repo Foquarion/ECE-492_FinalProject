@@ -1,0 +1,36 @@
+/*
+ * led.c
+ *
+ *  Created on: Sep 9, 2025
+ *      Author: Dallas.Owens
+ */
+
+#include "macros.h"
+#include  "functions.h"
+#include  "msp430.h"
+#include "ports.h"
+#include  "LED.h"
+
+
+/* *** USAGE NOTES ***
+ *
+ * P1OUT &= ~RED_LED;       // turn OFF RED led
+ * P1OUT |= RED_LED         // turn ON RED led
+ *
+ * P6OUT &= ~GRN_LED        // turn OFF GRN led
+ * P6OUT |= GRN_led         // turn ON GRN led
+ */
+
+
+void Init_LEDs(void){
+//------------------------------------------------------------------------------
+// LED Configurations
+//------------------------------------------------------------------------------
+// Turns OFF both LEDs
+  P1OUT &= ~RED_LED;
+  P6OUT &= ~GRN_LED;
+//------------------------------------------------------------------------------
+}
+
+
+

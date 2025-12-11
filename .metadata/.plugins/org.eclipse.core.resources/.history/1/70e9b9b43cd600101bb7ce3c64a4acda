@@ -1,0 +1,74 @@
+/*
+ * Init.c
+ *
+ *  Created on: Sep 9, 2025
+ *      Author: Dallas.Owens
+ */
+
+#include "macros.h"
+#include  "functions.h"
+#include  "msp430.h"
+#include "ports.h"
+#include "uart.h"
+#include  "LED.h"
+
+// void Init_Conditions(void);
+
+extern volatile unsigned char IOT_Data[PROCESS_BUFFER_LINES][PROCESS_BUFFER_SIZE];
+extern volatile unsigned int line;
+extern volatile unsigned int character;
+extern volatile unsigned int nextline;
+extern volatile unsigned char iot_parse_ready;
+extern volatile unsigned char ok_found;
+extern volatile unsigned char ready;
+
+
+void Init_Conditions(void){
+    //------------------------------------------------------------------------------
+
+	// PROJECT 9 SPECIFIC INITIALIZATIONS
+    int i;
+    unsigned int j;
+    for (i = 0; i < PROCESS_BUFFER_LINES; i++) {
+        for (j = 0; j < PROCESS_BUFFER_SIZE; j++) {
+            IOT_Data[i][j] = '\0';
+        }
+    }
+    line = 0;
+    character = 0;
+    nextline = 0;
+    iot_parse_ready = 0;
+    ok_found = 0;
+    ready = 0;
+
+
+    // ****************************
+    // LCD Display Initialization 
+    // (DO NOT REMOVE OR MODIFY!)
+    // ----------------------------
+    for(i=0;i<11;i++){
+        display_line[0][i] = RESET_STATE;
+        display_line[1][i] = RESET_STATE;
+        display_line[2][i] = RESET_STATE;
+        display_line[3][i] = RESET_STATE;
+    }
+    display_line[0][10] = 0;
+    display_line[1][10] = 0;
+    display_line[2][10] = 0;
+    display_line[3][10] = 0;
+
+    display[0] = &display_line[0][0];
+    display[1] = &display_line[1][0];
+    display[2] = &display_line[2][0];
+    display[3] = &display_line[3][0];
+    update_display = 0;
+    //-----------------------------
+
+    // lcd_BIG_mid();       // Uncomment if large 3 line wanted
+
+    // Interrupts are disabled by default, enable them.
+    enable_interrupts();
+    //------------------------------------------------------------------------------
+}
+
+

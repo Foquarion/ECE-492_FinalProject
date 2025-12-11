@@ -1,0 +1,72 @@
+/*
+ * interrupts_ports.c
+ *
+ *  Created on: Oct 12, 2025
+ *      Author: Dallas.Owens
+ */
+
+#include  "timers.h"
+#include  "msp430.h"
+#include  <string.h>
+#include  "functions.h"
+#include  "LCD.h"
+#include  "ports.h"
+#include "macros.h"
+#include "switches.h"
+#include  "LED.h"
+
+extern volatile unsigned char SW1_debounce, SW2_debounce;
+extern volatile unsigned int  SW1_cnt,      SW2_cnt;
+extern volatile unsigned char SW1_display,  SW2_display;
+extern volatile unsigned char default_display;
+
+
+
+extern volatile unsigned char LCD_Blink_Enable;
+extern volatile unsigned int blinkCount;
+
+
+
+// *************** BACKLIGHT CONTROL PROGRAM ******************
+
+#pragma vector = PORT4_VECTOR
+__interrupt void switchP4_interrupt(void)
+{ // SWITCH 1 INTERRUPT SERVICE
+    if(P4IFG & SW1){
+		// ISR ENTRY tasks
+        P4IFG &= ~SW1;                          // IFG SW1 CLEARED (pending interrupts cleared)
+        P4IE  &= ~SW1;                          // Disable SW1 Interrupt
+
+        // ISR FUNCTIONAL tasks             // What to do on SW1 PRESS
+        SW1_cnt = 0;                            // Reset Counter
+        SW1_debounce = 1;                       // Debounce enabled
+		SW1_pressed = 1;
+
+        // ISR EXIT tasks                       // PAUSE CCR0 -> Start Debounce
+        TB0CCTL1 &= ~CCIFG;                         // Clear possible pending interrupt
+		TB0CCR1   = TB0R + TB0CCR1_INTERVAL;     // Set CCR1 for debounce interval
+        TB0CCTL1  = CCIE;                           // start debounce timer
+    }
+}
+
+
+#pragma vector = PORT2_VECTOR
+__interrupt void switchP2_interrupt(void)
+{ // SWITCH 2 INTERRUPT SERVICE
+    if (P2IFG & SW2){
+        // ISR ENTRY tasks
+        P2IFG &= ~SW2;
+        P2IE &= ~SW2;
+
+        // ISR FUNCTIONAL tasks         // What to do on SW2 PRESS
+        SW2_cnt = 0;
+        SW2_debounce = 1;
+		SW2_pressed = 1;
+
+        // ISR EXIT tasks       // PAUSE CCR0 -> Start Debounce
+        TB0CCTL2 &= ~CCIFG;
+        TB0CCR2   = TB0R + TB0CCR2_INTERVAL;
+        TB0CCTL2  = CCIE;
+    }
+}
+// -----------------------------------------------------------------

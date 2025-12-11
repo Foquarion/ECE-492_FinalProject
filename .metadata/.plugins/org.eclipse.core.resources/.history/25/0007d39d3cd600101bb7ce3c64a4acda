@@ -1,0 +1,276 @@
+/*
+ * interrupts_timers.c
+ *
+ *  Created on: Oct 12, 2025
+ *      Author: Dallas.Owens
+ */
+
+#include "timers.h"
+#include "msp430.h"
+#include "ports.h"
+#include "macros.h"
+#include "functions.h"
+#include <string.h>
+//#include "DAC.h"
+#include "ADC.h"
+#include "LED.h"
+#include "bootup.h"
+//#include "calibration.h"
+
+
+// Defines
+#define UPDATE_READY        (DELAY_200MS)
+#define BLINK_INTERVAL      (DELAY_MS(200))
+#define SEQUENCE_RESET      (DELAY_MS(1250))
+#define DEBOUNCE_TIME       (DELAY_200MS)
+#define PING_PERIOD         (DELAY_MS(47000))
+
+
+// Globals
+//extern volatile unsigned char boot_timer_flag;
+//
+//volatile unsigned char updateCount;
+//volatile unsigned int blinkCount;
+//volatile unsigned char LCD_Blink_Enable;
+
+volatile unsigned int Time_Sequence;
+volatile unsigned char update_display;
+
+volatile unsigned int time_change;
+
+volatile unsigned char SW1_debounce,  SW2_debounce;
+volatile unsigned int  SW1_cnt,       SW2_cnt;
+volatile unsigned char SW1_display,   SW2_display;
+volatile unsigned char default_display;
+
+//volatile unsigned char brake_initiated;
+//volatile unsigned int brake_wait;
+//volatile unsigned char brake_complete;
+//
+//volatile unsigned char transition_initiated;
+//volatile unsigned int transition_wait;
+//volatile unsigned char transition_wait_complete;
+
+volatile unsigned long tb0_ccr0_hits = 0;
+volatile unsigned long tb1_ccr0_hits = 0;
+volatile unsigned long tb1_ccr1_hits = 0;
+
+volatile unsigned char adc_case = 0;
+volatile unsigned char sample_adc = 0;
+//
+//unsigned char iot_boot_cnt = 0;
+//volatile unsigned char reset_iot = 0;
+//volatile unsigned char iot_boot = 0;
+//volatile unsigned char send_message = 0;
+//volatile unsigned char message_timer = 0;
+//
+//extern volatile unsigned char parse_iot = 0;
+//extern volatile unsigned char parse_iot_ready = 0;
+//
+//volatile int TB2_CCR0_debug_ticks = 0;
+//
+//extern volatile unsigned int command_timer;
+//extern volatile unsigned char command_complete;
+//extern volatile unsigned char iot_boot_next;
+//extern volatile unsigned char process_line_follow;
+//extern volatile unsigned int drive_timer;
+//extern volatile unsigned char ebraking;
+//volatile unsigned char ping_time = 0;
+//volatile unsigned char send_ping = FALSE;
+
+//extern volatile unsigned char safety_stop;
+//unsigned int stop_timer = 0;
+//volatile unsigned char backlite_timer = 0;
+
+// Marquee Timer Variable (from led.c)
+extern volatile unsigned int marquee_timer;
+extern volatile unsigned char marquee_running;
+
+
+// ================== TIMER B0 - 0 INTERRUPT HANDLERS =================
+// --------------------------- 100ms INTERVAL --------------------------
+#pragma vector = TIMER_B0_CCR0_VECTOR
+__interrupt void TIMER_B0_CCR0_ISR(void){
+    TB0CCR0 += TB0CCR0_INTERVAL;         // ADD OFFSET TO TBCCR0
+
+    // LCD UPDATE DISPLAY (200ms - 2 x 100ms ticks)
+    if (++updateCount >= UPDATE_READY){
+        updateCount = 0;
+        update_display = 1;
+    }
+    if(++ping_time >= PING_PERIOD){
+        ping_time = 0;
+        send_ping = TRUE;
+    }
+}
+
+
+// ================== TIMER B0 1-2 INTERRUPT HANDLERS =================
+// --------------------------- 50ms INTERVALs -------------------------
+#pragma vector = TIMER_BO_CCR1_2_0V_VECTOR
+__interrupt void TIMER_BO_CCR1_2_0V_ISR(void)
+{ // TB0 CCR1 & CCR2 VECTOR
+    switch(__even_in_range(TB0IV, 14))
+    {
+    case 0: break;                                         // NO INTERRUPT
+
+    // ____________________ SW1 DEBOUNCE TIMER - TB0 CCR1 ____________________________________
+    case 2:     //SW1 DEBOUNCE HANDLER - 50ms 
+        if (SW1_debounce){
+            if(++SW1_cnt >= DEBOUNCE_TIME){                // Check if debounce time expired
+                SW1_debounce = 0;                          // Reset debounce flag -> debounce done
+                SW1_cnt = 0;                               // Reset counter for next debounce
+                P3IFG &= ~SW1;                             // Clear interrupt flag
+                P3IE |= SW1;                               // Re-enable SW1 interrupt for next press
+                TB0CCTL1 &= ~CCIE;                         // Disable CCR1 until next press
+            }
+            else{
+                TB0CCR1 += TB0CCR1_INTERVAL;                // Check again at next interval
+            }
+        }
+        else{
+            TB0CCTL1 &= ~CCIE;                               // Keep normally off (when not used)
+        }
+        break;
+
+    // ____________________ SW2 DEBOUNCE TIMER - TB0 CCR2 ____________________________________
+    case 4:     //SW2 DEBOUNCE HANDLER - 50ms
+        if (SW2_debounce) {
+            if (++SW2_cnt >= DEBOUNCE_TIME) {
+                SW2_debounce = 0;
+                SW2_cnt = 0;
+                P2IFG &= ~SW2;
+                P2IE |= SW2;
+                TB0CCTL2 &= ~CCIE;                              // Disable CCR2 until next press
+            }
+            else{
+                TB0CCR2 += TB0CCR2_INTERVAL;
+            }
+        }
+        else {
+            TB0CCTL2 &= ~CCIE;
+        }
+        break;
+
+    case 14:                                    // OVERFLOW
+        break;
+
+    default:
+        break;
+    }
+}
+
+// ================== TIMER B1 INTERRUPT HANDLERS ==================
+//
+//  TB1-0: ADC & IR Sampling Period Handler
+//  TB1-1: Black Line Following & Calibration Timer
+//  TB1-2: Command Timer
+//
+// ----------------- TIMER B1 - 0 ----------------
+// ----------------- 10ms Periodic INTERVAL ----------------
+#pragma vector = TIMER_B1_CCR0_VECTOR
+__interrupt void TIMER_B1_CCR0_ISR(void) {      // TB1 CCR0 - 10ms 
+    tb1_ccr0_hits++;
+    static unsigned char period = 0;
+    if (sample_adc)
+    {
+        if (period == 0) {                         // First interrupt after ADC sample (or start)
+            period = 1;
+            IR_ON();                                    // Turn IR LED ON
+            TB1CCR0 += ADC_SAMPLE_INTERVAL(2);          // Next interrupt in 2ms
+        }
+        else if (period == 1){                   // Second interrupt after IR ON
+            period = 0;
+            ADCCTL0 |= ADCSC;                           // Start ADC Conversion 2ms after IR ON
+            TB1CCR0 += ADC_SAMPLE_INTERVAL(8);          // Next interrupt in 8ms
+        }
+    }
+}
+
+// ----------------- TIMER B1 1-2 ----------------
+// ----------------- 100ms INTERVAL --------------
+#pragma vector = TIMER_B1_CCR1_2_0V_VECTOR
+__interrupt void TIMER_B1_CCR1_2_0V_ISR(void){  // TB1 CCR1 & CCR2 VECTOR
+    switch (__even_in_range(TB1IV, 14)) {
+    case 0: break;                                  // NO INTERRUPT
+
+    case 2:     // TB1 CCR1 - 100ms
+        tb1_ccr1_hits++;
+        TB1CCR1 += TB1CCR1_INTERVAL;
+        if (process_setup) {
+            setup_timer++;
+        }
+        break;
+
+    case 4:     // TB1 CCR2 - 100ms
+        TB1CCR2 += TB1CCR2_INTERVAL;                // ADD OFFSET TO B1.2
+        if (command_timer > 0) {
+            command_timer--;
+            if (command_timer == 0) {               
+                command_complete = TRUE;
+            }
+        }
+        break;
+
+    case 14:    // OVERFLOW
+        break;
+
+    default: 
+        break;
+    }
+}
+
+
+// ================== TIMER B2 INTERRUPT HANDLERS ==================
+//
+//  TB2-0: System Bootup Timer Flag set
+//  TB2-1: IOT Bootup Timer
+//  TB2-2: Marquee LED Timer (50ms ticks for 300ms delay)
+//
+// ----------------- TIMER B2 - CCR0 -----------------
+// ----------------- 200ms INTERVAL ----------------
+#pragma vector = TIMER_B2_CCR0_VECTOR
+__interrupt void TIMER_B2_CCR0_ISR(void) {          // TB2 CCR0 - 200ms
+    TB2CCR0 += TB2CCR0_INTERVAL;                    // ADD OFFSET TO TBCCR0
+    boot_timer_flag = TRUE;
+    TB2_CCR0_debug_ticks++;
+}
+
+// ----------------- TIMER B2 - 1-2 ---------------------
+// ----------------- CCR1: 100ms  CCR2: 50ms -----------
+#pragma vector = TIMER_B2_CCR1_2_0V_VECTOR
+__interrupt void TIMER_B2_CCR1_2_0V_ISR(void) {             // TB2 CCR1 & CCR2 VECTOR
+    switch (__even_in_range(TB2IV, 14)) {
+    case 0: break;                                              // NO INTERRUPT
+
+    // IOT STARTUP TIMER
+    case 2:     // TB2 CCR1 - 100ms
+        TB2CCR1 += TB2CCR1_INTERVAL;                    // ADD OFFSET TO TBCCR1
+        if(init_iot_connection){
+            if(++iot_boot_cnt >= DELAY_MS(300)){
+                iot_boot_next = TRUE;
+                iot_boot_cnt = 0;
+            }
+        }
+        else{
+            TB2CCTL1 &= ~CCIE;                          // Disable further interrupts
+        }
+        break;
+
+    // MARQUEE LED TIMER - 50ms ticks
+    case 4:     // TB2 CCR2 - 50ms
+        TB2CCR2 += TB2CCR2_INTERVAL;                   // ADD OFFSET TO TBCCR2
+        
+        // Increment marquee timer for 300ms delay tracking
+        if(marquee_running) {
+            marquee_timer++;
+        }
+        break;
+
+    case 14:    // OVERFLOW
+        break;
+
+    default:
+        break;
+    }
+}
