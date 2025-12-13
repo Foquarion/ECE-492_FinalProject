@@ -141,9 +141,9 @@ void Marquee_Process(void) {
             // Check if all LEDs are now off
             if (current_led >= NUM_MARQUEE_LEDS) {
                 // Sequence complete - return to default state
-                Marquee_Stop();             // ***Comment out for continuous***
-                LEDS_3_9_ON();              // ***Comment out for continuous***
-//                Marquee_Start();          // ***Uncomment for continuous marquee**
+                Marquee_Stop();
+                LEDS_3_9_ON();
+//                Marquee_Start();
             }
             break;
             
